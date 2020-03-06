@@ -1,0 +1,29 @@
+#menu
+{
+    background: rgba(0,0,0, .5);
+    z-index: 2 !important;
+}
+.fade
+{
+    z-index: 0 !important;
+}
+
+.bg-secondary
+{
+    background: rgba(78, 83, 87, .5) !important;
+}
+
+.btn
+{
+    width: 300px !important;
+    margin-bottom: 1em !important;
+}
+
+canvas
+{
+    z-index: 1;
+    background-image:    url(../img/background.jpg);
+    background-size:     cover;                      
+    background-repeat:   no-repeat;
+    background-position: center center;
+}

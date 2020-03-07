@@ -116,6 +116,7 @@ document.querySelector('#mainBtn').addEventListener("click", (event)=>
     lives = 3;
     levels = 1;
     ray = 0;
+    player = new Player(canvas);
     paused = false;
     inGame = false;
     $("#startMenu").modal();

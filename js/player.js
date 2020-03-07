@@ -7,8 +7,6 @@ class Player
         this.yLocation = canvas.height - 64;
         this.speedFactor = 10;
         this.dx = 0;
-        this.lives = 3;
-        this.score = 0;
         this.currentSprite = null;
         this.currentImg = "img/girlTurnedLeft.png";
         this.walking = 0;

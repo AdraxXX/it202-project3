@@ -2,15 +2,35 @@ let canvas = document.querySelector('canvas');
 let canvas2DContent = canvas.getContext('2d');
 let lastWidth = 0;
 let game = null;
-let score = 0;
-let lives = 3;
-let levels = 0;
 let ray = 0;
 let backgroundray = null;
+let numberBadFood = 20;
+let numberGoodFood = 5;
+let inGame = false;
 paused = false;
 canvas.width = 800;
 canvas.height = 500;
-let player = new Player(canvas); 
+player = new Player(canvas);
+
+const init = () =>
+{
+    for(let i = 0; i < numberGoodFood; i++)
+    {
+        let x = Math.random() * (canvas.width - (32));
+        let y =  (Math.random() * (canvas.width)) * -1;
+        let dy = 1;
+        goodFood.push(new BenefitObject(x, y, dy)); 
+    }
+    
+    for(let i = 0; i < numberBadFood; i++)
+    {
+        let x = Math.random() * (canvas.width - (32));
+        let y =  (Math.random() * (canvas.width)) * -1;
+        let dy = 1;
+        badFood.push(new HarmObject(x, y, dy)); 
+    }
+}
+
 const animate = () =>
 {
     game = window.requestAnimationFrame(animate);
@@ -26,6 +46,14 @@ const animate = () =>
     let background = document.createElement('img');
     background.src = "../img/backgroundgrass.png";
     canvas2DContent.drawImage(background, 0, 0, 800, 500);
+    if(lives <= 0)
+    {
+        window.cancelAnimationFrame(game);
+        game = null;
+        $("#gameOver").modal();
+        paused = true;
+    }
+    
     if(ray > 0 && ray <= 20)
     {
         backgroundray = null;
@@ -43,48 +71,107 @@ const animate = () =>
         if(ray === 40)
             ray = 0;
     }
+    
+    if(badFood.length < numberBadFood)
+    {
+        let x = Math.random() * (canvas.width - (32));
+        let y =  (Math.random() * (canvas.width)) * -1;
+        let dy = 1;
+        badFood.push(new HarmObject(x, y, dy));
+    }
+    
+    if(goodFood.length < numberGoodFood)
+    {
+        let x = Math.random() * (canvas.width - (32));
+        let y =  (Math.random() * (canvas.width)) * -1;
+        let dy = 1;
+        goodFood.push(new BenefitObject(x, y, dy)); 
+    }
+    
+    for(let i = 0; i < goodFood.length; i++)
+    {
+        goodFood[i].update(canvas2DContent, canvas, i);
+    }
+    
+    for(let i = 0; i < badFood.length; i++)
+    {
+        badFood[i].update(canvas2DContent, canvas, i);
+    }
     ray += 1;
 }
 
-animate();
-
+$("#startMenu").modal();
+document.querySelector('#startBtn').addEventListener("click", (event)=>
+{
+    init();
+    animate();
+    $("#startMenu").modal('hide');
+    inGame = true;
+});
+document.querySelector('#mainBtn').addEventListener("click", (event)=>
+{
+    goodFood = [];
+    badFood = [];
+    score = 0;
+    lives = 3;
+    levels = 1;
+    ray = 0;
+    paused = false;
+    inGame = false;
+    $("#startMenu").modal();
+    $("#menu").modal('hide');
+    canvas2DContent.clearRect(0,0,canvas.width,canvas.height);
+});
 document.querySelector('#resumeBtn').addEventListener("click", (event)=>
 {
     game = window.requestAnimationFrame(animate);
     $("#menu").modal('hide');
     paused = false;
 });
-
-document.querySelector('#resetBtn').addEventListener("click", (event)=>
+for(let buttons of document.querySelectorAll('#resetBtn'))
 {
-    let score = 0;
-    let lives = 0;
-    let levels = 0;
-    playe = null;
-    player = new Player(canvas);
-    game = window.requestAnimationFrame(animate);
-    $("#menu").modal('hide');
-    paused = false;
-});
+    buttons.addEventListener("click", (event)=>
+    {
+        goodFood = [];
+        badFood = [];
+        score = 0;
+        lives = 3;
+        levels = 1;
+        ray = 0;
+        player = new Player(canvas);
+        game = window.requestAnimationFrame(animate);
+        $(event.toElement.parentNode.parentNode.parentNode.parentNode).modal('hide');
+        paused = false;
+    });
+}
 
 document.addEventListener("keydown", (e) =>
 {
-    switch (e.code) {
-        case "Escape":
-        if(!paused)
+    if(inGame)
+    {
+        if(e.code == "Escape")
         {
-            window.cancelAnimationFrame(game);
-            game = null;
-            $("#menu").modal();
-            paused = true;
+            if(!paused)
+            {
+                window.cancelAnimationFrame(game);
+                game = null;
+                $("#menu").modal();
+                paused = true;
+            }
+            else
+            {
+                game = window.requestAnimationFrame(animate);
+                $("#menu").modal('hide');
+                paused = false;
+            }
         }
-        else
+    }
+    else
+    {
+        if(e.code == "Escape")
         {
-            game = window.requestAnimationFrame(animate);
-            $("#menu").modal('hide');
-            paused = false;
+            $("#startMenu").modal();
         }
-        break;
     }
 });
         

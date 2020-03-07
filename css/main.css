@@ -1,6 +1,18 @@
-#menu
+.items 
+{
+    padding: 0;
+    width: 32px;
+    height: auto;
+}
+.modal-dialog
+{
+    height: 500px !important;
+}
+
+#menu, #startMenu, #gameOver
 {
     background: rgba(0,0,0, .5);
+    color: red;
     z-index: 2 !important;
 }
 .fade
